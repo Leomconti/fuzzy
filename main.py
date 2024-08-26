@@ -147,7 +147,7 @@ def calculate_score(row, grupo_popularidade, grupo_receita, grupo_duracao, grupo
     return score
 
 
-def main():
+def run_fuzzy():
     # POPULARITY
     extremamente_popular = FuzzyVariable("Extremamente Popular", 48.82, 48.82, 875.58, 875.58)
     popular = FuzzyVariable("Popular", 12.92, 12.92, 48.82, 875.58)
@@ -273,6 +273,35 @@ def main():
     for result in top_10_geral:
         print(f"{result['title']}: Score Geral: {result['score_geral']:.2f}")
 
+    return results
+
+
+def generate_report(results, filename="relatorio.md"):
+    with open(filename, "w") as file:
+        file.write("\n# Top 10 Filmes por Categoria\n")
+
+        top_10_comercial = sorted(results, key=lambda x: x["score_comercial"], reverse=True)[:10]
+        top_10_critico = sorted(results, key=lambda x: x["score_critico"], reverse=True)[:10]
+        top_10_audiencia = sorted(results, key=lambda x: x["score_audiencia"], reverse=True)[:10]
+        top_10_geral = sorted(results, key=lambda x: x["score_geral"], reverse=True)[:10]
+
+        file.write("\n## Top 10 Filmes por Score Comercial:\n")
+        for result in top_10_comercial:
+            file.write(f"- {result['title']}: Score Comercial: {result['score_comercial']:.2f}\n")
+
+        file.write("\n## Top 10 Filmes por Score Crítico:\n")
+        for result in top_10_critico:
+            file.write(f"- {result['title']}: Score Crítico: {result['score_critico']:.2f}\n")
+
+        file.write("\n## Top 10 Filmes por Score de Audiência:\n")
+        for result in top_10_audiencia:
+            file.write(f"- {result['title']}: Score de Audiência: {result['score_audiencia']:.2f}\n")
+
+        file.write("\n## Top 10 Filmes por Score Geral:\n")
+        for result in top_10_geral:
+            file.write(f"- {result['title']}: Score Geral: {result['score_geral']:.2f}\n")
+
 
 if __name__ == "__main__":
-    main()
+    results = run_fuzzy()
+    generate_report(results)
